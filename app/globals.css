@@ -1,26 +1,62 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --primary-color: #b11e29;
+  --primary-color-dark: #8f1820;
+  --headline-color: #58595b;
+  --paragraph-color: #6c757d;
+
+  --brand-light-color: #f2f2f2;
+  --brand-light-color-2: #e9ecef;
+  --background-light-color: #ffffff;
+
+  --nav-height: 7.2rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  overflow: overlay;
+}
+
+.menu-link::after {
+  content: "";
+  width: 0;
+  height: 2px;
+  background-color: var(--primary-color);
+  position: relative;
+  bottom: -0.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: block;
+  transition: width 0.3s ease-in-out;
+}
+
+.menu-link.active::after,
+.menu-link:hover::after {
+  width: 100%;
+}
+
+nav.scroll .menu-link::after {
+  background-color: var(--primary-color);
+}
+
+#home::before {
+  content: "";
+  width: 100%;
+  height: calc(85% + var(--nav-height));
+  background-color: var(--brand-light-color);
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+@media (min-width: 1024px) {
+  #home::before {
+    height: calc(96% - var(--nav-height));
+  }
 }
