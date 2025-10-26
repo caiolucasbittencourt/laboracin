@@ -68,7 +68,7 @@ const TopBar = () => (
     <div className="max-w-7xl mx-auto px-6 h-10 flex justify-between items-center text-sm">
       <div className="flex items-center gap-2">
         <PhoneIcon />
-        <span className="hidden sm:inline">Telefone: (99) 3524-5325</span>
+        <span>Telefone: (99) 3524-5325</span>
       </div>
       <div className="flex items-center gap-4">
         <a
