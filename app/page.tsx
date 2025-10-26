@@ -513,7 +513,7 @@ export default function Home() {
                   ISO 9001
                 </h3>
                 <p className="text-[var(--primary-color)] leading-normal">
-                  Selo de Qualidade
+                  Selo de qualidade
                 </p>
               </div>
 
@@ -522,7 +522,7 @@ export default function Home() {
                   +1.000
                 </h3>
                 <p className="text-[var(--primary-color)] leading-normal">
-                  Tipos de Exames
+                  Tipos de exames
                 </p>
               </div>
             </div>
