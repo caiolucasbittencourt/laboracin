@@ -68,7 +68,7 @@ const TopBar = () => (
     <div className="max-w-7xl mx-auto px-6 h-10 flex justify-between items-center text-sm">
       <div className="flex items-center gap-2">
         <PhoneIcon />
-        <span>Telefone: (99) 3524-5325</span>
+        <span className="hidden sm:inline">Telefone: (99) 3524-5325</span>
       </div>
       <div className="flex items-center gap-4">
         <a
@@ -208,7 +208,6 @@ const MicroscopeIcon = () => (
 
 export default function Home() {
   const [isMenuOpen, setMenuOpen] = useState(false);
-  const [isScrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
   const [showBackToTop, setShowBackToTop] = useState(false);
 
@@ -240,7 +239,6 @@ export default function Home() {
     initScrollReveal();
 
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
       setShowBackToTop(window.scrollY > 500);
       const sections = ["home", "services", "about", "contact"];
       const checkpoint = window.pageYOffset + window.innerHeight / 2;
@@ -266,14 +264,10 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    document.body.style.overflow = isMenuOpen ? "hidden" : "overlay";
+    document.body.style.overflow = isMenuOpen ? "hidden" : "auto";
   }, [isMenuOpen]);
 
   const closeMenu = () => setMenuOpen(false);
-
-  const navClasses = `transition-colors duration-300 h-[var(--nav-height)] ${
-    isScrolled ? "bg-white/80 backdrop-blur-lg shadow-sm" : "bg-transparent"
-  }`;
 
   const menuLinkClasses = (id: string) =>
     `menu-link text-base transition-colors duration-300 ${
@@ -286,7 +280,10 @@ export default function Home() {
     <>
       <header className="fixed top-0 left-0 right-0 z-50">
         <TopBar />
-        <nav id="navigation" className={navClasses}>
+        <nav
+          id="navigation"
+          className="h-[var(--nav-height)] bg-white/80 backdrop-blur-lg shadow-sm"
+        >
           <div className="flex items-center justify-between h-full max-w-7xl mx-auto px-6">
             <a href="#home" className="logo z-50">
               <Logo />
@@ -325,35 +322,61 @@ export default function Home() {
               Resultados Online
             </a>
             <button
-              onClick={() => setMenuOpen(true)}
+              onClick={() => setMenuOpen(!isMenuOpen)}
               className="lg:hidden z-50"
+              aria-label={isMenuOpen ? "Fechar menu" : "Abrir menu"}
             >
-              <svg
-                width="30"
-                height="30"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M3 12H21"
-                  stroke="var(--primary-color)"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M3 6H21"
-                  stroke="var(--primary-color)"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M3 18H21"
-                  stroke="var(--primary-color)"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </svg>
+              {isMenuOpen ? (
+                <svg
+                  width="30"
+                  height="30"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M18 6L6 18"
+                    stroke="var(--primary-color)"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M6 6L18 18"
+                    stroke="var(--primary-color)"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  width="30"
+                  height="30"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M3 12H21"
+                    stroke="var(--primary-color)"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                  <path
+                    d="M3 6H21"
+                    stroke="var(--primary-color)"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                  <path
+                    d="M3 18H21"
+                    stroke="var(--primary-color)"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              )}
             </button>
           </div>
         </nav>
@@ -365,26 +388,6 @@ export default function Home() {
         }`}
       >
         <div className="text-center pt-[var(--nav-height)] mt-8">
-          <button onClick={closeMenu} className="absolute top-6 right-6 z-50">
-            <svg
-              width="30"
-              height="30"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M18 6L6 18"
-                stroke="var(--primary-color)"
-                strokeWidth="2"
-              />
-              <path
-                d="M6 6L18 18"
-                stroke="var(--primary-color)"
-                strokeWidth="2"
-              />
-            </svg>
-          </button>
           <ul className="flex flex-col gap-12 mt-16 text-2xl font-bold">
             <li>
               <a
@@ -442,46 +445,42 @@ export default function Home() {
         </div>
       </div>
 
-      <main
-        className="text-center overflow-x-hidden"
-        style={{ paddingTop: `calc(var(--nav-height) + 2.5rem)` }}
-      >
+      <main className="text-center overflow-x-hidden">
         <section
           id="home"
-          className="relative h-[650px] lg:h-[750px] overflow-hidden"
+          className="relative min-h-screen scroll-mt-[calc(var(--nav-height)+2.5rem)]"
         >
           <Image
             src="/laboracin-hero.jpg"
             alt="Laboratório Laboracin"
             fill
             priority
-            className="object-cover object-bottom"
+            className="object-cover object-center"
           />
 
           <div className="absolute inset-0 bg-[var(--primary-color)] opacity-20 mix-blend-multiply"></div>
-
           <div className="absolute inset-0 bg-black/40"></div>
 
-          <div className="relative z-10 max-w-xl lg:max-w-4xl mx-auto px-6 h-full flex flex-col justify-center">
-            <div className="py-20 lg:py-24 text-center text-white">
-              <header className="mt-10 lg:mt-0">
+          <div className="relative z-10 max-w-xl lg:max-w-5xl mx-auto px-6 w-full h-full flex flex-col pt-[calc(var(--nav-height)+2.5rem)]">
+            <div className="flex-grow flex flex-col justify-center items-center text-center text-white pt-12">
+              <header className="mb-8 md:mb-12">
                 <h4 className="text-1x1 text-[var(--primary-color)] uppercase font-bold tracking-widest mb-4">
                   Desde 1984 em Imperatriz
                 </h4>
-                <h1 className="text-3xl lg:text-5xl leading-tight mb-6 font-bold">
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl leading-tight mb-6 font-bold">
                   Tradição e tecnologia que juntas garantem os melhores
                   resultados!
                 </h1>
               </header>
 
-              <p className="text-lg leading-relaxed mb-8">
+              <p className="text-lg leading-relaxed mb-10 hidden md:block">
                 Em funcionamento desde 1984, o laboratório de exames Laboracin,
                 utiliza os melhores equipamentos e acessórios, garantindo alta
                 precisão e qualidade a seus resultados.
               </p>
 
               <a
-                className="flex items-center justify-center gap-4 bg-[var(--primary-color)] text-white uppercase font-bold py-4 px-8 rounded-full w-fit mx-auto mb-16 hover:bg-[var(--primary-color-dark)] transition-all transform hover:scale-100"
+                className="flex items-center justify-center gap-4 bg-[var(--primary-color)] text-white uppercase font-bold py-4 px-8 rounded-full w-fit mx-auto hover:bg-[var(--primary-color-dark)] transition-all transform hover:scale-100 mb-12"
                 href="https://wa.me/5599991984868"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -490,21 +489,18 @@ export default function Home() {
                   width="20"
                   height="20"
                   viewBox="0 0 24 24"
-                  fill="none"
+                  fill="white"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path
-                    d="M16.6 14.0001C16.4 13.9001 15.1 13.3001 14.9 13.2001C14.7 13.1001 14.5 13.1001 14.3 13.3001C14.1 13.5001 13.7 14.1001 13.5 14.3001C13.4 14.5001 13.2 14.5001 13 14.4001C12.3 14.1001 11.6 13.7001 11 13.2001C10.5 12.7001 10 12.1001 9.6 11.5001C9.5 11.3001 9.6 11.1001 9.7 11.0001C9.8 10.9001 9.9 10.7001 10.1 10.6001C10.2 10.5001 10.3 10.3001 10.3 10.2001C10.4 10.1001 10.4 9.9001 10.3 9.8001C10.2 9.7001 9.7 8.5001 9.5 8.0001C9.4 7.3001 9.2 7.3001 9 7.3001C8.9 7.3001 8.7 7.3001 8.5 7.3001C8.3 7.3001 8 7.5001 7.9 7.6001C7.3 8.2001 7 8.9001 7 9.7001C7.1 10.6001 7.4 11.5001 8 12.3001C9.1 13.9001 10.5 15.2001 12.2 16.0001C12.7 16.2001 13.1 16.4001 13.6 16.5001C14.1 16.7001 14.6 16.7001 15.2 16.6001C15.9 16.5001 16.5 16.0001 16.9 15.4001C17.1 15.0001 17.1 14.6001 17 14.2001C17 14.2001 16.8 14.1001 16.6 14.0001ZM19.1 4.9001C15.2 1.0001 8.9 1.0001 5 4.9001C1.8 8.1001 1.2 13.0001 3.4 16.9001L2 22.0001L7.3 20.6001C8.8 21.4001 10.4 21.8001 12 21.8001C17.5 21.8001 21.9 17.4001 21.9 11.9001C22 9.3001 20.9 6.8001 19.1 4.9001ZM16.4 18.9001C15.1 19.7001 13.6 20.2001 12 20.2001C10.5 20.2001 9.1 19.8001 7.8 19.1001L7.5 18.9001L4.4 19.7001L5.2 16.7001L5 16.4001C2.6 12.4001 3.8 7.4001 7.7 4.9001C11.6 2.4001 16.6 3.7001 19 7.5001C21.4 11.4001 20.3 16.5001 16.4 18.9001Z"
-                    fill="white"
-                  />
+                  <path d="M16.6 14.0001C16.4 13.9001 15.1 13.3001 14.9 13.2001C14.7 13.1001 14.5 13.1001 14.3 13.3001C14.1 13.5001 13.7 14.1001 13.5 14.3001C13.4 14.5001 13.2 14.5001 13 14.4001C12.3 14.1001 11.6 13.7001 11 13.2001C10.5 12.7001 10 12.1001 9.6 11.5001C9.5 11.3001 9.6 11.1001 9.7 11.0001C9.8 10.9001 9.9 10.7001 10.1 10.6001C10.2 10.5001 10.3 10.3001 10.3 10.2001C10.4 10.1001 10.4 9.9001 10.3 9.8001C10.2 9.7001 9.7 8.5001 9.5 8.0001C9.4 7.3001 9.2 7.3001 9 7.3001C8.9 7.3001 8.7 7.3001 8.5 7.3001C8.3 7.3001 8 7.5001 7.9 7.6001C7.3 8.2001 7 8.9001 7 9.7001C7.1 10.6001 7.4 11.5001 8 12.3001C9.1 13.9001 10.5 15.2001 12.2 16.0001C12.7 16.2001 13.1 16.4001 13.6 16.5001C14.1 16.7001 14.6 16.7001 15.2 16.6001C15.9 16.5001 16.5 16.0001 16.9 15.4001C17.1 15.0001 17.1 14.6001 17 14.2001C17 14.2001 16.8 14.1001 16.6 14.0001ZM19.1 4.9001C15.2 1.0001 8.9 1.0001 5 4.9001C1.8 8.1001 1.2 13.0001 3.4 16.9001L2 22.0001L7.3 20.6001C8.8 21.4001 10.4 21.8001 12 21.8001C17.5 21.8001 21.9 17.4001 21.9 11.9001C22 9.3001 20.9 6.8001 19.1 4.9001ZM16.4 18.9001C15.1 19.7001 13.6 20.2001 12 20.2001C10.5 20.2001 9.1 19.8001 7.8 19.1001L7.5 18.9001L4.4 19.7001L5.2 16.7001L5 16.4001C2.6 12.4001 3.8 7.4001 7.7 4.9001C11.6 2.4001 16.6 3.7001 19 7.5001C21.4 11.4001 20.3 16.5001 16.4 18.9001Z" />
                 </svg>
                 Agende sua Coleta
               </a>
             </div>
 
-            <div className="col-span-full bg-white w-full py-10 border border-[var(--brand-light-color)] rounded-lg flex flex-col justify-center gap-16 lg:flex-row lg:gap-0 lg:py-16 shadow-md">
+            <div className="stats col-span-full bg-white w-full py-8 border border-[var(--brand-light-color)] rounded-lg flex flex-col justify-center gap-6 lg:flex-row lg:gap-0 lg:py-16 shadow-md mb-16 lg:mb-12">
               <div className="lg:flex-1">
-                <h3 className="text-5xl text-[var(--headline-color)] leading-tight mb-1 font-bold">
+                <h3 className="text-4xl md:text-5xl text-[var(--headline-color)] leading-tight mb-1 font-bold">
                   +35
                 </h3>
                 <p className="text-[var(--primary-color)] leading-normal">
@@ -513,7 +509,7 @@ export default function Home() {
               </div>
 
               <div className="lg:flex-1 lg:border-l lg:border-[var(--brand-light-color-2)]">
-                <h3 className="text-5xl text-[var(--headline-color)] leading-tight mb-1 font-bold">
+                <h3 className="text-4xl md:text-5xl text-[var(--headline-color)] leading-tight mb-1 font-bold">
                   ISO 9001
                 </h3>
                 <p className="text-[var(--primary-color)] leading-normal">
@@ -522,7 +518,7 @@ export default function Home() {
               </div>
 
               <div className="lg:flex-1 lg:border-l lg:border-[var(--brand-light-color-2)]">
-                <h3 className="text-5xl text-[var(--headline-color)] leading-tight mb-1 font-bold">
+                <h3 className="text-4xl md:text-5xl text-[var(--headline-color)] leading-tight mb-1 font-bold">
                   +1.000
                 </h3>
                 <p className="text-[var(--primary-color)] leading-normal">
@@ -533,7 +529,10 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="services" className="py-24 lg:py-40">
+        <section
+          id="services"
+          className="py-20 md:py-24 lg:py-32 scroll-mt-[calc(var(--nav-height)+2.5rem)]"
+        >
           <div className="max-w-xl lg:max-w-6xl mx-auto px-6">
             <header className="mb-16">
               <h4 className="text-sm text-[var(--primary-color)] uppercase font-bold tracking-widest mb-4">
@@ -543,11 +542,11 @@ export default function Home() {
                 Soluções completas para sua saúde
               </h2>
             </header>
-            <div className="flex flex-col gap-8 lg:flex-row lg:flex-wrap lg:gap-10 justify-center">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {servicesData.map((service) => (
                 <div
                   key={service.title}
-                  className="bg-white p-6 border border-gray-100 rounded-lg text-left lg:w-[30%] lg:flex-grow shadow-sm transition-all duration-300"
+                  className="card bg-white p-6 border border-gray-100 rounded-lg text-left shadow-sm transition-all duration-300"
                 >
                   <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--brand-light-color)] mb-4">
                     {service.icon}
@@ -567,9 +566,9 @@ export default function Home() {
 
         <section
           id="about"
-          className="py-24 lg:py-40 bg-[var(--brand-light-color)] text-left"
+          className="py-20 md:py-24 lg:py-32 bg-[var(--brand-light-color)] text-left scroll-mt-[calc(var(--nav-height)+2.5rem)]"
         >
-          <div className="max-w-xl lg:max-w-6xl mx-auto px-6 lg:grid lg:grid-cols-2 lg:gap-x-24 items-center">
+          <div className="max-w-xl lg:max-w-6xl mx-auto px-6 md:grid md:grid-cols-2 md:gap-x-16 lg:gap-x-24 items-center">
             <div className="lg:order-last">
               <header>
                 <h4 className="text-sm text-[var(--primary-color)] uppercase font-bold tracking-widest mb-4">
@@ -592,7 +591,7 @@ export default function Home() {
                 aqui buscamos a mudança que queremos para o mundo!
               </p>
             </div>
-            <div className="mt-10 lg:mt-0 relative rounded-lg overflow-hidden shadow-lg">
+            <div className="mt-10 md:mt-0 relative rounded-lg overflow-hidden shadow-lg">
               <Image
                 src="/laboracin-sobre.jpg"
                 alt="Equipe do laboratório Laboracin"
@@ -605,8 +604,11 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="contact" className="py-24 lg:py-40 text-left">
-          <div className="max-w-xl lg:max-w-6xl mx-auto px-6 lg:grid lg:grid-cols-2 lg:gap-x-16 items-center">
+        <section
+          id="contact"
+          className="py-20 md:py-24 lg:py-32 text-left scroll-mt-[calc(var(--nav-height)+2.5rem)]"
+        >
+          <div className="max-w-xl lg:max-w-6xl mx-auto px-6 md:grid md:grid-cols-2 md:gap-x-16 items-center">
             <div>
               <header>
                 <h2 className="text-3xl lg:text-4xl text-[var(--headline-color)] leading-tight mb-8 font-bold">
@@ -621,6 +623,7 @@ export default function Home() {
                     viewBox="0 0 24 24"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
+                    className="flex-shrink-0 mt-1"
                   >
                     <path
                       d="M1 6V22L8 18L16 22L23 18V2L16 6L8 2L1 6Z"
@@ -671,25 +674,21 @@ export default function Home() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {" "}
                 <svg
                   width="20"
                   height="20"
                   viewBox="0 0 24 24"
-                  fill="none"
+                  fill="white"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path
-                    d="M16.6 14.0001C16.4 13.9001 15.1 13.3001 14.9 13.2001C14.7 13.1001 14.5 13.1001 14.3 13.3001C14.1 13.5001 13.7 14.1001 13.5 14.3001C13.4 14.5001 13.2 14.5001 13 14.4001C12.3 14.1001 11.6 13.7001 11 13.2001C10.5 12.7001 10 12.1001 9.6 11.5001C9.5 11.3001 9.6 11.1001 9.7 11.0001C9.8 10.9001 9.9 10.7001 10.1 10.6001C10.2 10.5001 10.3 10.3001 10.3 10.2001C10.4 10.1001 10.4 9.9001 10.3 9.8001C10.2 9.7001 9.7 8.5001 9.5 8.0001C9.4 7.3001 9.2 7.3001 9 7.3001C8.9 7.3001 8.7 7.3001 8.5 7.3001C8.3 7.3001 8 7.5001 7.9 7.6001C7.3 8.2001 7 8.9001 7 9.7001C7.1 10.6001 7.4 11.5001 8 12.3001C9.1 13.9001 10.5 15.2001 12.2 16.0001C12.7 16.2001 13.1 16.4001 13.6 16.5001C14.1 16.7001 14.6 16.7001 15.2 16.6001C15.9 16.5001 16.5 16.0001 16.9 15.4001C17.1 15.0001 17.1 14.6001 17 14.2001C17 14.2001 16.8 14.1001 16.6 14.0001ZM19.1 4.9001C15.2 1.0001 8.9 1.0001 5 4.9001C1.8 8.1001 1.2 13.0001 3.4 16.9001L2 22.0001L7.3 20.6001C8.8 21.4001 10.4 21.8001 12 21.8001C17.5 21.8001 21.9 17.4001 21.9 11.9001C22 9.3001 20.9 6.8001 19.1 4.9001ZM16.4 18.9001C15.1 19.7001 13.6 20.2001 12 20.2001C10.5 20.2001 9.1 19.8001 7.8 19.1001L7.5 18.9001L4.4 19.7001L5.2 16.7001L5 16.4001C2.6 12.4001 3.8 7.4001 7.7 4.9001C11.6 2.4001 16.6 3.7001 19 7.5001C21.4 11.4001 20.3 16.5001 16.4 18.9001Z"
-                    fill="white"
-                  />
+                  <path d="M16.6 14.0001C16.4 13.9001 15.1 13.3001 14.9 13.2001C14.7 13.1001 14.5 13.1001 14.3 13.3001C14.1 13.5001 13.7 14.1001 13.5 14.3001C13.4 14.5001 13.2 14.5001 13 14.4001C12.3 14.1001 11.6 13.7001 11 13.2001C10.5 12.7001 10 12.1001 9.6 11.5001C9.5 11.3001 9.6 11.1001 9.7 11.0001C9.8 10.9001 9.9 10.7001 10.1 10.6001C10.2 10.5001 10.3 10.3001 10.3 10.2001C10.4 10.1001 10.4 9.9001 10.3 9.8001C10.2 9.7001 9.7 8.5001 9.5 8.0001C9.4 7.3001 9.2 7.3001 9 7.3001C8.9 7.3001 8.7 7.3001 8.5 7.3001C8.3 7.3001 8 7.5001 7.9 7.6001C7.3 8.2001 7 8.9001 7 9.7001C7.1 10.6001 7.4 11.5001 8 12.3001C9.1 13.9001 10.5 15.2001 12.2 16.0001C12.7 16.2001 13.1 16.4001 13.6 16.5001C14.1 16.7001 14.6 16.7001 15.2 16.6001C15.9 16.5001 16.5 16.0001 16.9 15.4001C17.1 15.0001 17.1 14.6001 17 14.2001C17 14.2001 16.8 14.1001 16.6 14.0001ZM19.1 4.9001C15.2 1.0001 8.9 1.0001 5 4.9001C1.8 8.1001 1.2 13.0001 3.4 16.9001L2 22.0001L7.3 20.6001C8.8 21.4001 10.4 21.8001 12 21.8001C17.5 21.8001 21.9 17.4001 21.9 11.9001C22 9.3001 20.9 6.8001 19.1 4.9001ZM16.4 18.9001C15.1 19.7001 13.6 20.2001 12 20.2001C10.5 20.2001 9.1 19.8001 7.8 19.1001L7.5 18.9001L4.4 19.7001L5.2 16.7001L5 16.4001C2.6 12.4001 3.8 7.4001 7.7 4.9001C11.6 2.4001 16.6 3.7001 19 7.5001C21.4 11.4001 20.3 16.5001 16.4 18.9001Z" />
                 </svg>
                 Agende sua coleta
               </a>
             </div>
-            <div className="mt-10 lg:mt-0 h-96 rounded-lg overflow-hidden shadow-lg">
+            <div className="mt-10 md:mt-0 h-96 rounded-lg overflow-hidden shadow-lg">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3962.3330656093627!2d-47.48790758814777!3d-5.462311754020353!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x92b271d99908383f%3A0xf639a066606a13d7!2sR.%20Lu%C3%ADs%20Domingues%2C%201521%20-%20Centro%2C%20Imperatriz%20-%20MA%2C%2065900-330!5e0!3m2!1spt-BR!2sbr!4v1716301389279!5m2!1spt-BR!2sbr"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3969.8690321209733!2d-47.47957368523315!3d-5.52865999585149!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x92c5505080f55555%3A0x8a383d7807865261!2sR.%20Lu%C3%ADs%20Domingues%2C%201521%20-%20Centro%2C%20Imperatriz%20-%20MA%2C%2065900-500!5e0!3m2!1spt-BR!2sbr!4v1667845348873!5m2!1spt-BR!2sbr"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}
@@ -703,8 +702,8 @@ export default function Home() {
       </main>
 
       <footer className="bg-[var(--headline-color)] text-white py-16">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div>
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 sm:gap-8 text-center sm:text-left">
+          <div className="flex flex-col items-center sm:items-start">
             <LogoTextFooter className="text-white" />
             <p className="text-gray-400 mt-4 text-sm">
               ©2024 Laboracin. <br />
@@ -752,6 +751,7 @@ export default function Home() {
 
       <a
         href="#home"
+        aria-label="Voltar ao topo"
         className={`fixed bottom-4 right-6 transition-all duration-300 transform ${
           showBackToTop
             ? "opacity-100 visible scale-100"
