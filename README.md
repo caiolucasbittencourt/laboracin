@@ -5,7 +5,7 @@
 ![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2306B6D4.svg?style=for-the-badge&logo=tailwindcss&logoColor=white)
 ![ScrollReveal](https://img.shields.io/badge/ScrollReveal-66A9F6?style=for-the-badge&logo=scrollreveal&logoColor=white)
 
-Site institucional para o laboratório de análises clínicas Laboracin, desenvolvida para ser moderna e totalmente responsiva.
+Site institucional para um laboratório de análises clínicas, desenvolvida para ser moderna e totalmente responsiva.
 
 ## Funcionalidades
 
